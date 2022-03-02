@@ -24,10 +24,11 @@ let persons = [
 const express = require("express");
 const app = express();
 
+app.use(express.static("build"));
+app.use(express.json());
+
 const cors = require("cors");
 app.use(cors());
-
-app.use(express.json());
 
 const morgan = require("./config/morgan");
 app.use(morgan);
