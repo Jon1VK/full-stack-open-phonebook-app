@@ -4,7 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const Person = require("./models/person");
 
-morgan.token("body", (req, res) =>
+morgan.token("body", (req) =>
   req.method === "POST" ? JSON.stringify(req.body) : null
 );
 
@@ -17,7 +17,7 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-app.get("/info", (req, res, next) => {
+app.get("/info", (_req, res, next) => {
   Person.count({})
     .then((count) => {
       res.send(
@@ -95,7 +95,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-const errorHandler = (error, req, res, next) => {
+const errorHandler = (error, _req, res, next) => {
   console.log(error.message);
 
   if (error.name === "CastError") {
