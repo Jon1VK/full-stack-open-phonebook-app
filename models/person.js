@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const url = process.env.MONGODB_URI;
 
-console.log(`connectiong to ${url}`);
+console.log(`connecting to MongoDB`);
 mongoose
   .connect(url)
   .then(() => {
@@ -15,12 +15,18 @@ mongoose
 const personSchema = new mongoose.Schema({
   name: {
     type: String,
-    minlength: 5,
     required: true,
+    minlength: 3,
   },
   number: {
     type: String,
     required: true,
+    minlength: 8,
+    validate: {
+      validator: (value) => /^\d{2,3}-\d+$/.test(value),
+      message:
+        "Phone number should have two parts separated by dash and the first part should have 2 or 3 digits",
+    },
   },
 });
 

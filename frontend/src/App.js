@@ -32,31 +32,6 @@ const App = () => {
     setTimeout(() => setNotification(nullNotification), TIMEOUT_MS);
   };
 
-  const createPerson = (person) => {
-    personService.create(person).then((createdPerson) => {
-      setPersons(persons.concat(createdPerson));
-      createNotification(false, `Added ${createdPerson.name}`);
-    });
-  };
-
-  const updatePerson = (id, person) => {
-    personService
-      .update(id, person)
-      .then((updatedPerson) => {
-        setPersons(
-          persons.map((person) => (person.id !== id ? person : updatedPerson))
-        );
-        createNotification(false, `Updated ${updatedPerson.name}`);
-      })
-      .catch(() => {
-        setPersons(persons.filter((person) => person.id !== id));
-        createNotification(
-          true,
-          `Information of ${person.name} has already been removed from server`
-        );
-      });
-  };
-
   const addPerson = (event) => {
     event.preventDefault();
 
@@ -81,6 +56,40 @@ const App = () => {
     } else {
       createPerson(newPerson);
     }
+  };
+
+  const createPerson = (person) => {
+    personService
+      .create(person)
+      .then((createdPerson) => {
+        setPersons(persons.concat(createdPerson));
+        createNotification(false, `Added ${createdPerson.name}`);
+      })
+      .catch((error) => {
+        createNotification(true, error.response.data.error);
+      });
+  };
+
+  const updatePerson = (id, person) => {
+    personService
+      .update(id, person)
+      .then((updatedPerson) => {
+        setPersons(
+          persons.map((person) => (person.id !== id ? person : updatedPerson))
+        );
+        createNotification(false, `Updated ${updatedPerson.name}`);
+      })
+      .catch((error) => {
+        if (error.response.status === 404) {
+          setPersons(persons.filter((person) => person.id !== id));
+          createNotification(
+            true,
+            `Information of ${person.name} has already been removed from server`
+          );
+        } else {
+          createNotification(true, error.response.data.error);
+        }
+      });
   };
 
   const deletePerson = (person) => {

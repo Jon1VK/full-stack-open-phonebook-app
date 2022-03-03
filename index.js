@@ -78,7 +78,11 @@ app.put("/api/persons/:id", (req, res, next) => {
     context: "query",
   })
     .then((updatedPerson) => {
-      res.json(updatedPerson);
+      if (updatedPerson) {
+        res.json(updatedPerson);
+      } else {
+        res.status(404).end();
+      }
     })
     .catch((error) => next(error));
 });
